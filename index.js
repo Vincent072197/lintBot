@@ -11,11 +11,12 @@ const config = {
 const lineClient = new Client(config);
 // 建立資料庫連線池
 const db = mysql.createPool({
-  host: process.env.MYSQL_HOST, // ← 這裡
-  port: process.env.MYSQL_PORT,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+  host: process.env.MYSQLHOST, // ← 這裡
+  port: process.env.MYSQLPORT,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE
+  ,
 });
 
 const app = express();
