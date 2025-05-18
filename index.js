@@ -60,13 +60,28 @@ async function handleEvent(event) {
   if (isAuto === '新') return
 
   if (text === 'Total') {
-    const [row] = await db.execute('SELECT COUNT(*) as Total FROM serialID')
+    const [row] = await db.execute('SELECT COUNT(*) as Total FROM NewTable')
     const total =row[0].Total
     let reply = `目前已登錄筆數共:${total}筆`
     return lineClient.replyMessage(event.replyToken, {
       type: 'text',
       text: reply,
     })
+    }
+
+    if(text === '查看所有紀錄'){
+
+      const [rows] = await db.execute('SELECT serialID FROM NewTable')
+      let AllData = ''
+      for(let data of rows ){
+        AllData +=`${data.serialID}\n`
+
+        return lineClient.replyMessage(event.replyToken,{
+          type:'text',
+          text:AllData
+        })
+      }
+
     }
 
   const ts = new Date();
