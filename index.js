@@ -103,8 +103,22 @@ async function handleEvent(event) {
           [text]
         );
         console.log(Time);
-        const TimeFormat  = String(Time[0].Time).split(" ")
-        reply = `已在${TimeFormat[1],TimeFormat[0],TimeFormat[2],TimeFormat[3],TimeFormat[4]}登錄`;
+        const rawTime = Time[0].Time; // Example: "2025-05-18 14:30:00"
+        const isoTime = rawTime.replace(' ', 'T') + 'Z'; // Add 'Z' to indicate UTC
+        const date = new Date(isoTime);
+
+        // Convert to Taiwanese time (UTC+8)
+        const taiwanTime = date.toLocaleString('zh-TW', {
+          timeZone: 'Asia/Taipei',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        });
+        reply = `已在${taiwanTime}登錄`;
       }
 
       // 3. 回覆使用者
