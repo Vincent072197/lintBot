@@ -56,6 +56,8 @@ async function handleEvent(event) {
   }
 
   const text = event.message.text.trim()
+  const isAuto = text.slice(0,1)
+  if(isAuto === '新') return
   const ts = new Date();
   const lowerFirstLetter = text.toLowerCase().slice(0, 1)
   let reply = '查無該序號！';
