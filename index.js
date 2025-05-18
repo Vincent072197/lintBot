@@ -55,45 +55,70 @@ async function handleEvent(event) {
     return;
   }
 
-  const text = event.message.text;
+  const text = event.message.text.trim()
   const ts = new Date();
+  const lowerFirstLetter = text.toLowerCase().slice(0, 1)
+  let reply = '查無該序號！';
+  if (lowerFirstLetter === 'd') {
+    try {
+      const dText = text.slice(1, text.length)
+      const [rows] = await db.execute(
+        'SELECT serialID FROM NewTable WHERE serialID = ? LIMIT 1', [dText]
+      )
+      if (rows.length === 1) {
+        await db.execute('DELETE FROM NewTable WHERE serialID = ?', [dText])
+        reply = `${dText}已刪除成功`
+      }
+      return lineClient.replyMessage(event.replyToken, {
+        type: 'text',
+        text: reply,
+      });
 
-  try {
-    // 1. 在資料庫中比對
-    const [rows] = await db.execute(
-      'SELECT serialID FROM NewTable WHERE serialID = ? LIMIT 1',
-      [text]
-    );
-
-    let reply = '謝謝你的訊息，我們已經收到！';
-    if (rows.length < 1) {
-      // 2. 將訊息存入資料庫
-      await db.execute('INSERT INTO NewTable (serialID,Time) VALUES (?,?)', [
-        text,
-        ts,
-      ]);
-      // reply = rows[0].serialID;
-    } else {
-      const [Time] = await db.execute(
-        'SELECT Time FROM NewTable WHERE serialID = ? LIMIT 1',
+    } catch (err) {
+      console.error('🔥 handleEvent 發生錯誤：', err);
+      return lineClient.replyMessage(event.replyToken, {
+        type: 'text',
+        text: 504,
+      });
+    }
+  } else {
+    try {
+      // 1. 在資料庫中比對
+      const [rows] = await db.execute(
+        'SELECT serialID FROM NewTable WHERE serialID = ? LIMIT 1',
         [text]
       );
-      console.log(Time);
 
-      reply = `已在${Time[0].Time}登錄`;
+      let reply = '謝謝你的訊息，我們已經收到！';
+      if (rows.length < 1) {
+        // 2. 將訊息存入資料庫
+        await db.execute('INSERT INTO NewTable (serialID,Time) VALUES (?,?)', [
+          text,
+          ts,
+        ]);
+        // reply = rows[0].serialID;
+      } else {
+        const [Time] = await db.execute(
+          'SELECT Time FROM NewTable WHERE serialID = ? LIMIT 1',
+          [text]
+        );
+        console.log(Time);
+
+        reply = `已在${Time[0].Time}登錄`;
+      }
+
+      // 3. 回覆使用者
+      return lineClient.replyMessage(event.replyToken, {
+        type: 'text',
+        text: reply,
+      });
+    } catch (err) {
+      console.error('🔥 handleEvent 發生錯誤：', err);
+      return lineClient.replyMessage(event.replyToken, {
+        type: 'text',
+        text: '新增資料失敗，請聯繫Oli',
+      });
     }
-
-    // 3. 回覆使用者
-    return lineClient.replyMessage(event.replyToken, {
-      type: 'text',
-      text: reply,
-    });
-  } catch (err) {
-    console.error('🔥 handleEvent 發生錯誤：', err);
-    return lineClient.replyMessage(event.replyToken, {
-      type: 'text',
-      text: 504,
-    });
   }
 }
 
