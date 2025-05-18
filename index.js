@@ -103,13 +103,18 @@ async function handleEvent(event) {
           [text]
         );
         console.log(Time);
-        const rawTime = Time[0].Time; // Example: "2025-05-18 14:30:00"
-        const isoTime = rawTime.replace(' ', 'T') + 'Z'; // Add 'Z' to indicate UTC
+        // 假設 Time[0].Time = "2025-05-18 14:30:00"
+        const rawTime = Time[0].Time;
+
+        // 1) 換成 ISO 8601（告訴 JS 這是 UTC+8）
+        const isoTime = rawTime.replace(' ', 'T') + '+08:00';
+        // → "2025-05-18T14:30:00+08:00"
+
+        // 2) 用 Date 物件解析
         const date = new Date(isoTime);
 
-        // Convert to Taiwanese time (UTC+8)
+        // 3) 用台灣在地格式輸出
         const taiwanTime = date.toLocaleString('zh-TW', {
-          timeZone: 'Asia/Taipei',
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -117,6 +122,7 @@ async function handleEvent(event) {
           minute: '2-digit',
           second: '2-digit',
           hour12: false,
+          timeZone: 'Asia/Taipei', // 再次保險，確保時區
         });
         reply = `已在${taiwanTime}登錄`;
       }
