@@ -103,7 +103,7 @@ async function handleEvent(event) {
           [text]
         );
         console.log(Time);
-        const TimeFormat  = Time[0].Time.replace(/[a-zA-Z]/g,'')
+        const TimeFormat  = String(Time[0].Time).replace(/[a-zA-Z]/g,'')
         reply = `已在${TimeFormat}登錄`;
       }
 
