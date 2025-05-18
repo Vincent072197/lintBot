@@ -69,7 +69,7 @@ async function handleEvent(event) {
     })
     }
 
-    if(text === '查看所有紀錄'){
+    if(text === 'Record Overview'){
 
       const [rows] = await db.execute('SELECT serialID FROM NewTable')
       let AllData = ''
