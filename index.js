@@ -73,7 +73,7 @@ async function handleEvent(event) {
 
     const [rows] = await db.execute('SELECT serialID FROM NewTable')
     let AllData = ''
-    if (rows.length > 1) {
+    if (rows.length >= 1) {
 
       for (let data of rows) {
         AllData += `${data.serialID}\n`
